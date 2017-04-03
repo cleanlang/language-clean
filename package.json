@@ -1,0 +1,19 @@
+{
+  "name": "language-clean",
+  "version": "0.1.0",
+  "description": "clean language support in Atom",
+  "keywords": [ "clean" ],
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/geekskool/language-clean.git"
+  },
+  "bugs": {
+    "url": "https://github.com/geekskool/language-clean/issues"
+  },
+  "license": "MIT"
+}

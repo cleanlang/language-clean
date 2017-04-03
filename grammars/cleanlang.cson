@@ -1,0 +1,96 @@
+'scopeName': 'source.cleanlang'
+'name': 'cleanlang'
+'fileTypes': ['cl']
+
+'patterns': [
+    {
+    'include': '#numbers'
+    },
+    {
+    'include': '#boolean'
+    },
+    {
+    'include': '#null'
+    },
+    {
+    'include': '#strings'
+    }
+]
+'repository':
+  'numbers':
+    'patterns': [
+      {
+       'match': '\\b(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))\\b'
+       'name': 'constant.numeric.cleanlang'
+      }
+    ]
+  'boolean':
+    'patterns': [
+      {
+        'match': '\\b(true|false)\\b'
+        'name': 'constant.language.boolean.cleanlang'
+      }
+    ]
+  'null':
+    'patterns': [
+      {
+        'match': '\\b(null)\\b'
+        'name': 'constant.language.null.cleanlang'
+      }
+    ]
+  'strings':
+    'patterns': [
+      {
+        'begin': '\''
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.string.begin.cleanlang'
+        'end': '\''
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.string.end.cleanlang'
+        'name': 'string.quoted.single.cleanlang'
+      }
+      {
+        'include': '#string_escapes'
+      }
+      {
+        'begin': '\"'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.string.InvalidBegin.cleanlang'
+        'end': '\"'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.string.InvalidEnd.cleanlang'
+        'name': 'invalid.illegal.string.cleanlang'
+      }
+    ]
+  'string_escapes':
+    'patterns': [
+      {
+        'match': '\\\\u(?![A-Fa-f0-9]{4}|{[A-Fa-f0-9]+})[^\'"]*'
+        'name': 'invalid.illegal.unicode-escape.cleanlang'
+      }
+      {
+        'match': '\\\\u(?:[A-Fa-f0-9]{4}|({)([A-Fa-f0-9]+)(}))'
+        'name': 'constant.character.escape.cleanlang'
+        'captures':
+          '1':
+            'name': 'punctuation.definition.unicode-escape.begin.bracket.curly.cleanlang'
+          '2':
+            'patterns': [
+              {
+                # Max codepoint: \u{10FFFF}
+                'match': '[A-Fa-f\\d]{7,}|(?!10)[A-Fa-f\\d]{6}'
+                'name': 'invalid.illegal.unicode-escape.cleanlang'
+              }
+            ]
+          '3':
+            'name': 'punctuation.definition.unicode-escape.end.bracket.curly.cleanlang'
+      }
+      {
+        'match': '\\\\(x\\h{2}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)'
+        'name': 'constant.character.escape.cleanlang'
+      }
+    ]
