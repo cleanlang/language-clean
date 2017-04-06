@@ -1,6 +1,6 @@
 {
-  "name": "language-clean",
-  "version": "0.1.0",
+  "name": "cleanlang",
+  "version": "0.1.1",
   "description": "clean language support in Atom",
   "keywords": [ "clean" ],
   "engines": {
