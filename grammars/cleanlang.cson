@@ -4,13 +4,10 @@
 'name': 'cleanlang'
 'patterns': [
     {
-    'include': '#variable'
+    'include': '#includes'
     }
     {
-    'include': '#function_decl'
-    }
-    {
-    'include': '#objects'
+    'include': '#keywords'
     }
     {
     'include':'#curly'
@@ -20,12 +17,6 @@
     }
     {
     'include': '#comments'
-    }
-    {
-    'include': '#keywords'
-    }
-    {
-    'include': '#method_calls'
     }
     {
     'include': '#numbers'
@@ -45,8 +36,35 @@
     {
     'include': '#round'
     }
+    {
+    'include': '#variable'
+    }
+    {
+    'include': '#function_declaration'
+    }
+    {
+    'include': '#function_calls'
+    }
+    {
+    'include': '#objects'
+    }
+    {
+    'include': '#properties'
+    }
+    {
+    'include': '#method_calls'
+    }
 ]
 'repository':
+  'includes':
+    'patterns': [
+      {
+        'match': '\\binclude\\s+(node-core|browser-core)\\b'
+        'captures':
+          '0':
+            'name': 'keyword.includes.cleanlang'
+      }
+    ]
   'numbers':
     'patterns': [
       {
@@ -129,25 +147,25 @@
       {
         'captures':
           '1':
-            'name': 'punctuation.section.begin.comment.js'
+            'name': 'punctuation.section.begin.comment.cleanlang'
           '2':
-            'name': 'punctuation.section.end.comment.js'
+            'name': 'punctuation.section.end.comment.cleanlang'
         'match': '(/\\*)(\\*/)'
-        'name': 'comment.block.empty.js'
+        'name': 'comment.block.empty.cleanlang'
       }
       {
         'begin': '/\\*\\*'
         'beginCaptures':
           '0':
-            'name': 'punctuation.section.begin.comment.js'
+            'name': 'punctuation.section.begin.comment.cleanlang'
         'end': '\\*/'
         'endCaptures':
           '0':
-            'name': 'punctuation.section.end.comment.js'
-        'name': 'comment.block.documentation.js'
+            'name': 'punctuation.section.end.comment.cleanlang'
+        'name': 'comment.block.documentation.cleanlang'
         'patterns': [
           {
-            'include': 'source.jsdoc'
+            'include': 'source.cleanlangdoc'
           }
         ]
       }
@@ -155,35 +173,39 @@
         'begin': '/\\*'
         'beginCaptures':
           '0':
-            'name': 'punctuation.section.begin.comment.js'
+            'name': 'punctuation.section.begin.comment.cleanlang'
         'end': '\\*/'
         'endCaptures':
           '0':
-            'name': 'punctuation.section.end.comment.js'
-        'name': 'comment.block.js'
+            'name': 'punctuation.section.end.comment.cleanlang'
+        'name': 'comment.block.cleanlang'
       }
       {
         'begin': '//'
         'beginCaptures':
           '0':
-            'name': 'punctuation.definition.comment.js'
+            'name': 'punctuation.definition.comment.cleanlang'
         'end': '$'
-        'name': 'comment.line.double-slash.js'
+        'name': 'comment.line.double-slash.cleanlang'
       }
     ]
   'operators':
     'patterns': [
       {
+        'match': '<\\=|>\\=|\\=\\=|<|>|\\!\\='
+        'name': 'keyword.operator.comparison.cleanlang'
+      }
+      {
+        'match': '\\='
+        'name': 'keyword.operator.assignment.augmented.cleanlang'
+      }
+      {
+        'match': '<\\-'
+        'name': 'keyword.operator.reverse-bind.cleanlang'
+      }
+      {
         'match': '&&|!|\\|\\|'
         'name': 'keyword.operator.logical.cleanlang'
-      }
-      {
-        'match': '=|:|<-'
-        'name': 'keyword.operator.assignment.cleanlang'
-      }
-      {
-        'match': '!==|<=|>=|==|<|>'
-        'name': 'keyword.operator.comparison.cleanlang'
       }
       {
         'match': '\\+\\+'
@@ -191,27 +213,39 @@
       }
       {
         'match': '%|\\*|/|-|\\+'
-        'name': 'keyword.operator.cleanlang'
+        'name': 'keyword.operator.arithmetic.cleanlang'
       }
     ]
   'keywords':
     'patterns': [
       {
-        'match': '\\b(if|then|else|return|in|let)\\b'
-        'name': 'keyword.control.cleanlang'
+        'match': '\\b(if|then|else|else\\s+if)\\b'
+        'name' : 'keyword.control.conditional.cleanlang'
       }
       {
-        'match': '\\b(getLine|putLine|include|do|IO|defineProperty|delete)\\b'
+        'match': '\\b(getLine|return|in|let|putLine|do|IO|defineProperty|delete)\\b'
         'name': 'keyword.reserved.cleanlang'
       }
     ]
   'variable':
     'patterns': [
       {
-        'match': '\\b\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*='
+        'match': '\\b\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*=\\s+(.*)'
         'captures':
           '1':
             'name': 'storage.type.constant.cleanlang'
+          '2':
+            'patterns': [
+                {
+                  'include': '$self'
+                }
+            ]
+      }
+      {
+        'match': '\\b\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\:)'
+        'captures':
+          '1':
+            'name': 'entity.name.variable.cleanlang'
       }
     ]
   'square':
@@ -231,27 +265,22 @@
   'objects':
     'patterns': [
       {
-        # OBJ in OBJ.prop, OBJ.methodCall()
-        'match': '[A-Z][A-Z0-9_$]*(?=\\s*\\.\\s*[a-zA-Z_$]\\w*)'
+        # OBJ|obJ|Obj in OBJ.prop, OBJ.methodCall()
+        'match': '\\b[a-zA-Z_][a-zA-Z0-9_$]*(?=\\.[a-zA-Z_$]\\w+)'
         'name': 'constant.other.object.cleanlang'
-      }
-      {
-        # obj in obj.prop, obj.methodCall()
-        'match': '[a-zA-Z_$][\\w$]*(?=\\s*\\.\\s*[a-zA-Z_$]\\w*)'
-        'name': 'variable.other.object.cleanlang'
       }
     ]
   'method_calls':
     'patterns': [
       {
-        'match': '(\\.)\\s*([\\w$]+)\\s*(.*|\\n)'
+        'match': '(\\.)([\\w$]*)\\s*(\\(.+?\\))'
         'captures':
           '1':
             'name': 'meta.delimiter.method.period.cleanlang'
           '2':
             'patterns': [
               {
-                'match': "[a-zA-Z_$][\\w$]*"
+                'match': "[a-zA-Z_$][\\w$]+"
                 'name': 'entity.name.function.cleanlang'
               }
               {
@@ -260,46 +289,18 @@
               }
             ]
           '3':
-            'patterns': [
-                {
-                  'include': '#arguments'
-                }
-            ]
+            'name': 'variable.argument.object.cleanlang'
         'name': 'meta.method-call.cleanlang'
       }
-    ]
-  'arguments':
-    'patterns': [
       {
-        # arg1 arg2 in .objName arg1 arg2 ...
-        'match': '\\s*(([A-Za-z_][A-Za-z0-9_]*)\\s*)'
-        'name': 'meta.arguments.cleanlang'
-      }
-      {
-        'begin': '\\('
-        'beginCaptures':
-          '0': 'punctuation.definition.arguments.begin.bracket.round.cleanlang'
-        'end': '\\)'
-        'endCaptures':
-          '0': 'punctuation.definition.arguments.end.bracket.round.cleanlang'
-        'name': 'meta.arguments.cleanlang'
-        'patterns': [
-          'include': '$self'
-        ]
-      }
-      {
-        'include': '$self'
-      }
-    ]
-  'function_decl':
-    'patterns': [
-      {
-        'match': '\\s*([\\w$]+)\\s*((([A-Za-z_][A-Za-z0-9_]*)\\s*)+)\\s*(=)(.*|\\n)'
+        'match': '(\\.)([\\w$]*)\\s+(([\\w$]+).+)'
         'captures':
           '1':
+            'name': 'meta.delimiter.method.period.cleanlang'
+          '2':
             'patterns': [
               {
-                'match': "[a-zA-Z_$][\\w$]*"
+                'match': "[a-zA-Z_$][\\w$]+"
                 'name': 'entity.name.function.cleanlang'
               }
               {
@@ -307,11 +308,177 @@
                 'name': 'invalid.illegal.identifier.cleanlang'
               }
             ]
+          '3':
+            'name': 'variable.argument.method-call.cleanlang'
+        'name': 'meta.method-call.cleanlang'
+      }
+    ]
+  'function_declaration':
+    'patterns': [
+      {
+        'begin': '\\s*([A-Za-z_][A-Za-z0-9_]*)(((\\s+)([A-Za-z_][A-Za-z0-9_]*))+)\\s+(?=\\=\\s+)'
+        'beginCaptures':
+          '1':
+            'name': 'entity.name.function_declaration.cleanlang'
           '2':
-            'name': 'variable.parameter.function.cleanlang'
-          '6':
+            'name': 'meta.function.parameters.cleanlang'
             'patterns': [
-              'include': '$self'
+              {
+                'match': '([A-Za-z_][A-Za-z0-9_]*)'
+                'name' : 'variable.parameter.function.cleanlang'
+              }
             ]
+        'end': '(\\=)'
+        'endCaptures':
+          '1':
+            'name': 'keyword.operator.assignment.cleanlang'
+      }
+      {
+        'match': '([A-Za-z_][A-Za-z0-9_]*)\\s*(.+?)\\s+(?=\\=\\s+)'
+        'captures':
+          '1':
+            'name': 'entity.name.function_declaration.cleanlang'
+          '2':
+            'patterns': [
+              {
+                'include': '#boolean'
+              }
+              {
+                'include': '#numeric'
+              }
+              {
+                'include': '#strings'
+              }
+              {
+                'include': '$self'
+              }
+            ]
+      }
+    ]
+  'properties':
+    'patterns': [
+      {
+        # PROP1 in obj.PROP1.prop2, func().PROP1.prop2
+        'match': '(\\.)([A-Z][A-Z0-9_$]+\\$*)(?=\\.)'
+        'captures':
+          '1':
+            'name': 'meta.delimiter.property.period.cleanlang'
+          '2':
+            'name': 'variable.other.object.property.cleanlang'
+      }
+      {
+        # prop1 in obj.prop1.prop2, func().prop1.prop2
+        'match': '(\\.)([a-zA-Z_$][\\w$]+)(?=\\.)'
+        'captures':
+          '1':
+            'name': 'meta.delimiter.property.period.cleanlang'
+          '2':
+            'name': 'variable.other.object.property.cleanlang'
+      }
+      {
+        # PROP in obj.PROP, func().PROP
+        'match': '(\\.)([A-Z][A-Z0-9_$]+)(?=\\.)'
+        'captures':
+          '1':
+            'name': 'meta.delimiter.property.period.cleanlang'
+          '2':
+            'name': 'variable.other.object.property.cleanlang'
+      }
+      {
+        # prop in obj.prop, func().prop
+        'match': '(\\.)([a-zA-Z_$][\\w$]+)(?=\\.)'
+        'captures':
+          '1':
+            'name': 'meta.delimiter.property.period.cleanlang'
+          '2':
+            'name': 'variable.other.object.property.cleanlang'
+      }
+      {
+        # 123illegal in obj.123illegal, func().123illegal
+        'match': '(\\.)\\s*([0-9][\\w$]*)'
+        'captures':
+          '1':
+            'name': 'meta.delimiter.property.period.cleanlang'
+          '2':
+            'name': 'invalid.illegal.identifier.cleanlang'
+      }
+    ]
+  'identifier':
+    'patterns': [
+      {
+      'match': '[a-zA-Z_][a-zA-Z_0-9]*'
+      'name': 'variable.identifier.cleanlang'
+      }
+    ]
+  'function_calls':
+    'patterns': [
+      {
+        'match': '([A-Za-z_][A-Za-z0-9_]*)\\s+([^\\+|\\%|\\*|\\+\\+|\\/|\\%|\\=\\=|\\-|\\>|\\<|\\^|if|then|else].+?)(?=$\\n|\\+)'
+        'captures':
+          '1':
+            'name': 'entity.name.function_declaration.cleanlang'
+          '2':
+            'patterns': [
+              {
+                'include': '#boolean'
+              }
+              {
+                'include': 'keywords'
+              }
+              {
+                'include': '#argument'
+              }
+              {
+                'include': '#numeric'
+              }
+              {
+                'include': '#bracket_function'
+              }
+              {
+                'include': '#argument'
+              }
+              {
+                'include': '#strings'
+              }
+              {
+                'include': '$self'
+              }
+            ]
+          'name': 'meta.arguments.cleanlang'
+      }
+    ]
+  'bracket_function':
+    'patterns': [
+      {
+        'begin': '\\('
+        'beginCaptures':
+          '0`':
+            'name': 'punctuation.definition.bracket.round.begin.cleanlang'
+        'end': '\\)'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.bracket.round.end.cleanlang'
+        'patterns': [
+          {
+            'include': '#function_calls'
+          }
+          {
+            'include': '#argument'
+          }
+          {
+            'include': '#operators'
+          }
+          {
+            'include': '$self'
+          }
+        ]
+
+      }
+    ]
+  'argument':
+    'patterns': [
+      {
+      'match': '[a-zA-Z_][a-zA-Z_0-9]*'
+      'name': 'meta.arguments.cleanlang'
       }
     ]
